@@ -1,1 +1,33 @@
+name: Deploy to EC2
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ec2-3-85-231-158.compute-1.amazonaws.com
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: 22
+        script: |
+          cd CRUD-products/
+          sudo git pull origin main
+          sudo mvn clean package -DskipTests
+
+          # Kill old Spring Boot app
+          sudo pkill -f 'java.*productsCrud' || true
+          
+          # Start new app
+          sudo nohup java -jar target/*.jar > log.txt 2>&1 &
