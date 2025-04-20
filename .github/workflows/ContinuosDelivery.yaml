@@ -24,6 +24,7 @@ jobs:
         script: |
           cd CRUD-products/
           git pull origin main
+          git reset --hard
           sudo mvn clean package -DskipTests
         
           # Kill any existing Spring Boot app
