@@ -22,22 +22,4 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
         script: |
-          cd CRUD-products/
-          git pull origin main
-          git reset --hard
-          sudo mvn clean package -DskipTests
-        
-          # Kill any existing Spring Boot app
-          sudo pkill -f 'java.*productsCrud' || true
-        
-          # Wait a bit for port to free up
-          sudo sleep 3
-        
-          # Start new app in background
-          sudo nohup java -jar target/productsCrud-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
-        
-          # Give it time to start
-          sudo sleep 5
-        
-          # Confirm app is running
-          sudo pgrep -f 'java.*productsCrud' && echo "App started!" || echo "Failed to start"
+          ./deploy.sh
